@@ -27,8 +27,10 @@ public class ServerSocket {
                 try {
                     java.net.ServerSocket serverSocket = new java.net.ServerSocket(30000);
                     while (true) {
+                        //接收连接请求
                         Socket s = serverSocket.accept();
                         list.add(s);
+                        //为每一个连接开启一个的线程
                         new Thread(new ServiceRunnable(s)).start();
                     }
                 } catch (IOException e) {
@@ -59,6 +61,7 @@ public class ServerSocket {
             System.out.println(s.getPort());
 
             while ((content = readContent()) != null) {
+                //遍历所有连接了的Socket，向所有客户端Socket发送消息
                 for (Iterator<Socket> it = list.iterator(); it.hasNext(); ) {
                     Socket socket = it.next();
                     try {
@@ -72,6 +75,10 @@ public class ServerSocket {
             }
         }
 
+        /**
+         * 读取客户端发来的消息
+         * @return
+         */
         public String readContent() {
             try {
                 return br.readLine();

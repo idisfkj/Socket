@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         et = (EditText) findViewById(R.id.et);
         bt = (Button) findViewById(R.id.bt);
         bt.setOnClickListener(this);
+        //开启一线程获取服务端的消息
         clientThread = new ClientThread(mHandler);
         new Thread(clientThread).start();
     }
@@ -68,6 +69,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         public void run() {
             try {
+                //创建通信连接
                 socket = new Socket("192.168.56.1", 30000);
                 br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
@@ -77,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     @Override
                     public void run() {
                         try {
+                            //读取服务端发来的消息
                             while ((line = br.readLine()) != null) {
                                 Message message = new Message();
                                 message.what = 1;
@@ -95,6 +98,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     public void handleMessage(Message msg) {
                         if (msg.what == 2) {
                             try {
+                                //向服务端发送消息
                                 pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
                                 pw.println(msg.obj);
                             } catch (IOException e) {
